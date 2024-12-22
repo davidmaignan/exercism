@@ -1,2 +1,1 @@
-# exercism
-Exercism solutions
+/Users/davidmaignan/Documents/research/exercism/README.md

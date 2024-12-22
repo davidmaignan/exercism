@@ -1,25 +1,38 @@
 defmodule Newsletter do
   def read_emails(path) do
-    case File.read(path) do
-      {:ok, content} when content == "" -> []
-      {:ok, content} -> content |> String.trim() |> String.split("\n")
-      _ -> []
-    end
+    path
+    |> File.read!()
+    |> String.split("\n")
+    |> Enum.filter(&(&1 != ""))
   end
 
   def open_log(path) do
-    # Please implement the open_log/1 function
+    File.open!(path, [:write])
   end
 
   def log_sent_email(pid, email) do
-    # Please implement the log_sent_email/2 function
+    IO.puts(pid, email)
   end
 
   def close_log(pid) do
-    # Please implement the close_log/1 function
+    File.close(pid)
   end
 
   def send_newsletter(emails_path, log_path, send_fun) do
-    # Please implement the send_newsletter/3 function
+    emails = read_emails(emails_path)
+    log = open_log(log_path)
+    do_send_emails(emails, log, send_fun)
+    close_log(log)
+  end
+
+  defp do_send_emails([], _, _), do: :ok
+
+  defp do_send_emails([email | emails], log, send) do
+    case send.(email) do
+      :ok -> log_sent_email(log, email)
+      _ -> nil
+    end
+
+    do_send_emails(emails, log, send)
   end
 end
